@@ -26,8 +26,7 @@ RUN curl -Lo /usr/local/bin/kind https://kind.sigs.k8s.io/dl/v0.26.0/kind-linux-
     && chmod +x /usr/local/bin/kind
 
 # Install bazelisk (latest release)
-RUN curl -L https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 \
-      -o /usr/local/bin/bazelisk \
+RUN curl -Lo /usr/local/bin/bazelisk https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 \
     && chmod +x /usr/local/bin/bazelisk \
     && ln -s /usr/local/bin/bazelisk /usr/local/bin/bazel
 

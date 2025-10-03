@@ -1,16 +1,7 @@
+
 # Getting Started with Blueprint
 
-This guide will help you get started with Blueprint, a poly### 5. Build the Project
-
-```bash
-# Build everything
-bazel build //...
-
-# Or build a specific target
-bazel build //path/to:target
-```
-
-### 6. Run Testsstarter repository.
+This guide will help you get started with Blueprint, a polyglot Bazel starter repository.
 
 ## Prerequisites
 

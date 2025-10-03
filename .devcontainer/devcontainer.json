@@ -1,9 +1,15 @@
 {
+  // https://containers.dev/implementors/json_reference/
   "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
-  "name": "Dev image with direnv and Bazel",
+  "name": "Dev image with direnv, Bazel, Skaffold, Docker, Kind, Gcloud, Pulumi, Terraform, etc.",
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "containerEnv": {
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
+    "GITHUB_USER": "${localEnv:GITHUB_USER}"
+  },
+  "runArgs": ["--name=blueprint"],
   "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ],
@@ -13,5 +19,15 @@
     }
   },
   "postCreateCommand": "direnv allow; bazel run tools:bazel_env || true",
-  "remoteUser": "vscode"
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "BazelBuild.vscode-bazel",
+        "google.gemini-cli-vscode-ide-companion",
+        "googlecloudtools.cloudcode",
+        "ms-azuretools.vscode-containers"
+      ]
+    }
+  }
 }

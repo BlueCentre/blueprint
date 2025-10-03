@@ -315,14 +315,16 @@ This project uses [rules_multitool](https://github.com/theoremlp/rules_multitool
 
 2. **Compute SHA256 checksums**
 
-   Download each binary and compute its SHA256 hash:
+   Download each binary/archive and compute its SHA256 hash:
    ```bash
    # For direct binary files
    curl -sL https://dl.k8s.io/release/v1.34.1/bin/linux/amd64/kubectl | sha256sum
    
-   # For archives (extract first, then hash)
-   curl -sL https://url/to/archive.tar.gz | tar xz && sha256sum path/to/binary
+   # For archives - hash the archive file itself, not the extracted binary
+   curl -sL https://url/to/archive.tar.gz -o archive.tar.gz && sha256sum archive.tar.gz
    ```
+
+   **Important:** For archives, you must hash the downloaded archive file, not the extracted binary.
 
 3. **Add tool definition to `tools/tools.lock.json`**
 
