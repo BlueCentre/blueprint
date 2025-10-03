@@ -141,5 +141,105 @@
         "cpu": "arm64"
       }
     ]
+  },
+  "kubectl": {
+    "binaries": [
+      {
+        "kind": "file",
+        "url": "https://dl.k8s.io/release/v1.34.1/bin/linux/amd64/kubectl",
+        "sha256": "7721f265e18709862655affba5343e85e1980639395d5754473dafaadcaa69e3",
+        "os": "linux",
+        "cpu": "x86_64"
+      },
+      {
+        "kind": "file",
+        "url": "https://dl.k8s.io/release/v1.34.1/bin/linux/arm64/kubectl",
+        "sha256": "420e6110e3ba7ee5a3927b5af868d18df17aae36b720529ffa4e9e945aa95450",
+        "os": "linux",
+        "cpu": "arm64"
+      },
+      {
+        "kind": "file",
+        "url": "https://dl.k8s.io/release/v1.34.1/bin/darwin/amd64/kubectl",
+        "sha256": "bb211f2b31f2b3bc60562b44cc1e3b712a16a98e9072968ba255beb04cefcfdf",
+        "os": "macos",
+        "cpu": "x86_64"
+      },
+      {
+        "kind": "file",
+        "url": "https://dl.k8s.io/release/v1.34.1/bin/darwin/arm64/kubectl",
+        "sha256": "d80e5fa36f2b14005e5bb35d3a72818acb1aea9a081af05340a000e5fbdb2f76",
+        "os": "macos",
+        "cpu": "arm64"
+      }
+    ]
+  },
+  "skaffold": {
+    "binaries": [
+      {
+        "kind": "file",
+        "url": "https://github.com/GoogleContainerTools/skaffold/releases/download/v2.16.1/skaffold-linux-amd64",
+        "sha256": "1cbeea85aa14ba603dbc2bbdfa7bfde5644d7988beed0fdc0fd1c67298d4cf67",
+        "os": "linux",
+        "cpu": "x86_64"
+      },
+      {
+        "kind": "file",
+        "url": "https://github.com/GoogleContainerTools/skaffold/releases/download/v2.16.1/skaffold-linux-arm64",
+        "sha256": "b68fa949b7a918935641061b5bf3917e0be3a5ecaa591169f7cc0f8362c3fb82",
+        "os": "linux",
+        "cpu": "arm64"
+      },
+      {
+        "kind": "file",
+        "url": "https://github.com/GoogleContainerTools/skaffold/releases/download/v2.16.1/skaffold-darwin-amd64",
+        "sha256": "ed4c6cd0c82f48908db6bc1210b2f609bb5672b340ad1fbaa092ed2c6acedeb5",
+        "os": "macos",
+        "cpu": "x86_64"
+      },
+      {
+        "kind": "file",
+        "url": "https://github.com/GoogleContainerTools/skaffold/releases/download/v2.16.1/skaffold-darwin-arm64",
+        "sha256": "135916bc0d3250857c2dbe8b12da4dd21a38a7d5ef96926cf14ed94226343694",
+        "os": "macos",
+        "cpu": "arm64"
+      }
+    ]
+  },
+  "gcloud": {
+    "binaries": [
+      {
+        "kind": "archive",
+        "url": "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz",
+        "file": "google-cloud-sdk/bin/gcloud",
+        "sha256": "1bd66d2f4bf45ebfcfdc98b109c262ad022af9d8ce9ebad8afa06faa48620e0e",
+        "os": "linux",
+        "cpu": "x86_64"
+      },
+      {
+        "kind": "archive",
+        "url": "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-arm.tar.gz",
+        "file": "google-cloud-sdk/bin/gcloud",
+        "sha256": "6882d3255f5cd78b2016665a9f251b94e75106432ff677d288e99e78470a1950",
+        "os": "linux",
+        "cpu": "arm64"
+      },
+      {
+        "kind": "archive",
+        "url": "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-darwin-x86_64.tar.gz",
+        "file": "google-cloud-sdk/bin/gcloud",
+        "sha256": "e41964cb245ce447fce64ddc786cc40fbde29cfab5099a219f496398331b2e5d",
+        "os": "macos",
+        "cpu": "x86_64"
+      },
+      {
+        "kind": "archive",
+        "url": "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-darwin-arm.tar.gz",
+        "file": "google-cloud-sdk/bin/gcloud",
+        "sha256": "9dcdd86a06c84c83043418224bf73ac2e63f2a89386ec32b9192707fd518a3c0",
+        "os": "macos",
+        "cpu": "arm64"
+      }
+    ]
   }
 }

@@ -290,10 +290,141 @@ bazel run //:gazelle
 
 ### Add New Tool
 
-1. Add to `tools/tools.lock.json`
-2. Run `bazel run //tools:bazel_env`
-3. Run `direnv allow`
-4. Test tool availability
+This project uses [rules_multitool](https://github.com/theoremlp/rules_multitool) to manage cross-platform CLI tools. Tools are defined in `tools/tools.lock.json` and automatically made available via `bazel run //tools:bazel_env`.
+
+#### Steps to Add a Tool
+
+1. **Find the latest version and download URLs**
+
+   For most tools, check their GitHub releases page or official download site. You'll need:
+   - Latest version number
+   - Download URLs for all platforms (Linux x86_64, Linux arm64, macOS x86_64, macOS arm64)
+   - Binary type: single file or archive (tar.gz, zip)
+
+   Example for kubectl:
+   ```bash
+   # Get latest version
+   curl -sL https://api.github.com/repos/kubernetes/kubernetes/releases/latest | grep tag_name
+   
+   # Version URLs follow pattern:
+   # https://dl.k8s.io/release/v1.34.1/bin/linux/amd64/kubectl
+   # https://dl.k8s.io/release/v1.34.1/bin/linux/arm64/kubectl
+   # https://dl.k8s.io/release/v1.34.1/bin/darwin/amd64/kubectl
+   # https://dl.k8s.io/release/v1.34.1/bin/darwin/arm64/kubectl
+   ```
+
+2. **Compute SHA256 checksums**
+
+   Download each binary and compute its SHA256 hash:
+   ```bash
+   # For direct binary files
+   curl -sL https://dl.k8s.io/release/v1.34.1/bin/linux/amd64/kubectl | sha256sum
+   
+   # For archives (extract first, then hash)
+   curl -sL https://url/to/archive.tar.gz | tar xz && sha256sum path/to/binary
+   ```
+
+3. **Add tool definition to `tools/tools.lock.json`**
+
+   Add a new entry with platform-specific binaries. Two formats are supported:
+
+   **For single binary files:**
+   ```json
+   "kubectl": {
+     "binaries": [
+       {
+         "kind": "file",
+         "url": "https://dl.k8s.io/release/v1.34.1/bin/linux/amd64/kubectl",
+         "sha256": "7721f265e18709862655affba5343e85e1980639395d5754473dafaadcaa69e3",
+         "os": "linux",
+         "cpu": "x86_64"
+       },
+       {
+         "kind": "file",
+         "url": "https://dl.k8s.io/release/v1.34.1/bin/linux/arm64/kubectl",
+         "sha256": "420e6110e3ba7ee5a3927b5af868d18df17aae36b720529ffa4e9e945aa95450",
+         "os": "linux",
+         "cpu": "arm64"
+       },
+       {
+         "kind": "file",
+         "url": "https://dl.k8s.io/release/v1.34.1/bin/darwin/amd64/kubectl",
+         "sha256": "bb211f2b31f2b3bc60562b44cc1e3b712a16a98e9072968ba255beb04cefcfdf",
+         "os": "macos",
+         "cpu": "x86_64"
+       },
+       {
+         "kind": "file",
+         "url": "https://dl.k8s.io/release/v1.34.1/bin/darwin/arm64/kubectl",
+         "sha256": "d80e5fa36f2b14005e5bb35d3a72818acb1aea9a081af05340a000e5fbdb2f76",
+         "os": "macos",
+         "cpu": "arm64"
+       }
+     ]
+   }
+   ```
+
+   **For archives (tar.gz, zip):**
+   ```json
+   "gcloud": {
+     "binaries": [
+       {
+         "kind": "archive",
+         "url": "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz",
+         "file": "google-cloud-sdk/bin/gcloud",
+         "sha256": "1bd66d2f4bf45ebfcfdc98b109c262ad022af9d8ce9ebad8afa06faa48620e0e",
+         "os": "linux",
+         "cpu": "x86_64"
+       },
+       // ... repeat for other platforms
+     ]
+   }
+   ```
+
+   **Field reference:**
+   - `kind`: Either `"file"` (direct binary) or `"archive"` (tar.gz/zip)
+   - `url`: Direct download URL
+   - `file`: (archives only) Path to binary within extracted archive
+   - `sha256`: SHA256 checksum of the downloaded file
+   - `os`: Either `"linux"`, `"macos"`, or `"windows"`
+   - `cpu`: Either `"x86_64"` or `"arm64"`
+
+4. **Rebuild bazel_env**
+
+   ```bash
+   bazel run //tools:bazel_env
+   ```
+
+5. **Update shell environment**
+
+   ```bash
+   direnv allow
+   # Or manually:
+   hash -r
+   ```
+
+6. **Test tool availability**
+
+   ```bash
+   which kubectl
+   kubectl version --client
+   ```
+
+#### Platform Support Notes
+
+- **Linux and macOS**: Include both x86_64 and arm64 for cross-platform development
+- **macOS-only tools**: If a tool isn't available as a standalone binary for macOS (e.g., Docker CLI), document using Homebrew instead:
+  ```bash
+  # For macOS developers
+  brew install docker
+  ```
+- **Windows**: Currently not supported in this repository's dev containers
+
+#### Troubleshooting
+
+- **Binary not found after adding**: Ensure the `file` path in archives is correct relative to the extracted archive root
+- **Checksum mismatch**: Re-download and recompute the SHA256, ensuring you're hashing the correct file
+- **Tool not on PATH**: Run `bazel run //tools:bazel_env` and `direnv allow` again
 
 ## Troubleshooting
 
