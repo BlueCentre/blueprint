@@ -1,6 +1,16 @@
 # Getting Started with Blueprint
 
-This guide will help you get started with Blueprint, a polyglot Bazel starter repository.
+This guide will help you get started with Blueprint, a poly### 5. Build the Project
+
+```bash
+# Build everything
+bazel build //...
+
+# Or build a specific target
+bazel build //path/to:target
+```
+
+### 6. Run Testsstarter repository.
 
 ## Prerequisites
 
@@ -58,7 +68,40 @@ copier --help
 yq --help
 ```
 
-### 4. Build the Project
+### 4. (Optional) Set Up Kubernetes for Container Development
+
+If you're working with containerized applications, set up a local Kubernetes cluster using kind:
+
+```bash
+# Verify Docker is running
+docker info
+
+# Create a local Kubernetes cluster
+./tools/kind-cluster.sh create
+
+# Check cluster status
+./tools/kind-cluster.sh status
+
+# Verify kubectl access
+kubectl get nodes
+```
+
+The kind cluster includes:
+- Single-node setup optimized for limited resources
+- Port mappings: `localhost:8080` → cluster port 80, `localhost:8443` → cluster port 443
+- Automatic kubectl configuration
+
+**Cluster management commands:**
+```bash
+./tools/kind-cluster.sh create    # Create cluster
+./tools/kind-cluster.sh status    # Check status
+./tools/kind-cluster.sh restart   # Restart cluster
+./tools/kind-cluster.sh delete    # Remove cluster
+```
+
+**Note:** The cluster is not started automatically. Create it when needed and delete it to free resources.
+
+### 5. Build the Project
 
 ```bash
 # Build everything

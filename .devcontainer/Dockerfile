@@ -21,6 +21,10 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends docker-ce-cli \
     && rm -rf /var/lib/apt/lists/*
 
+# Install kind (Kubernetes in Docker)
+RUN curl -Lo /usr/local/bin/kind https://kind.sigs.k8s.io/dl/v0.26.0/kind-linux-amd64 \
+    && chmod +x /usr/local/bin/kind
+
 # Install bazelisk (latest release)
 RUN curl -L https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 \
       -o /usr/local/bin/bazelisk \

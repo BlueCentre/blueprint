@@ -305,6 +305,115 @@ func main() {
 bazel build //path/to:image
 ```
 
+### Local Kubernetes Development with kind
+
+The dev container includes **kind** (Kubernetes in Docker) for local cluster development. This is optimized for resource-constrained environments.
+
+#### Managing the Cluster
+
+```bash
+# Create a new cluster (single node, resource-efficient)
+./tools/kind-cluster.sh create
+
+# Check cluster status
+./tools/kind-cluster.sh status
+
+# Restart cluster
+./tools/kind-cluster.sh restart
+
+# Delete cluster to free resources
+./tools/kind-cluster.sh delete
+```
+
+#### Deploying to kind
+
+**Load local images into kind:**
+```bash
+# Build your image
+bazel build //path/to:image
+
+# Load into Docker
+bazel run //path/to:image
+
+# Load into kind cluster
+kind load docker-image your-image:tag --name blueprint-dev
+```
+
+**Deploy with kubectl:**
+```bash
+# Create deployment
+kubectl create deployment my-app --image=your-image:tag
+
+# Expose service
+kubectl expose deployment my-app --port=8080 --target-port=8080
+
+# Port forward to access locally
+kubectl port-forward deployment/my-app 8080:8080
+```
+
+**Using Skaffold for continuous development:**
+```bash
+# Initialize skaffold configuration
+skaffold init
+
+# Continuous development mode (auto-rebuild on changes)
+skaffold dev
+
+# Deploy once
+skaffold run
+```
+
+#### Accessing Services
+
+The kind cluster is configured with port mappings:
+- `localhost:8080` → cluster port 80 (HTTP)
+- `localhost:8443` → cluster port 443 (HTTPS)
+
+**Example Ingress:**
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app
+spec:
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: my-app
+            port:
+              number: 8080
+```
+
+After applying this Ingress, access your app at `http://localhost:8080`
+
+#### Resource Management
+
+**Monitor cluster resources:**
+```bash
+# Check node resources
+kubectl top nodes
+
+# Check pod resources
+kubectl top pods
+
+# View resource usage
+kubectl describe node blueprint-dev-control-plane
+```
+
+**Clean up unused resources:**
+```bash
+# Delete unused pods/services
+kubectl delete deployment,service --all
+
+# Or delete the entire cluster when not in use
+./tools/kind-cluster.sh delete
+```
+
 ## Debugging
 
 ### Debug Bazel
