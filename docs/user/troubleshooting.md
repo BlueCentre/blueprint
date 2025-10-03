@@ -468,6 +468,73 @@ go mod graph | grep package-name
    du -sh $(bazel info output_base)
    ```
 
+#### Dev Container-Specific: Relocate Bazel cache to larger volume
+
+**Problem:** Working in a dev container where the workspace volume has limited space, but `/tmp` or another mount has more available space.
+
+**Context:** In dev containers, the workspace is often on a smaller overlay filesystem while `/tmp` may be mounted from a larger volume. Bazel's cache (including downloaded toolchains, external dependencies, and build outputs) can consume significant space (10+ GB).
+
+**Solution:** Relocate Bazel's cache to a volume with more space:
+
+1. **Check available space:**
+   ```bash
+   df -h
+   # Look for volumes with more free space (e.g., /tmp, /var/tmp)
+   ```
+
+2. **Identify disk usage:**
+   ```bash
+   # Check overall filesystem usage
+   du -x -sh /* 2>/dev/null | sort -hr | head -20
+   
+   # Check Bazel cache size
+   du -sh ~/.cache/bazel 2>/dev/null || echo "No cache found"
+   du -sh /tmp/*bazel* 2>/dev/null || echo "No cache in /tmp"
+   ```
+
+3. **Configure Bazel to use /tmp for cache (recommended for dev containers):**
+   
+   Create or edit `user.bazelrc` in the workspace root:
+   ```bash
+   # /workspaces/yourproject/user.bazelrc
+   startup --output_user_root=/tmp/yourproject-bazel-cache-$(id -u)
+   common --disk_cache=/tmp/yourproject-bazel-disk-cache-$(id -u)
+   ```
+   
+   Note: The workspace `.bazelrc` should already include `try-import %workspace%/user.bazelrc` to load this file.
+
+4. **Create cache directories with correct ownership:**
+   ```bash
+   # Using your actual user ID for namespacing
+   mkdir -p /tmp/yourproject-bazel-cache-$(id -u) /tmp/yourproject-bazel-disk-cache-$(id -u)
+   sudo chown -R $(id -u):$(id -g) /tmp/yourproject-bazel-cache-$(id -u) /tmp/yourproject-bazel-disk-cache-$(id -u)
+   ```
+
+5. **Verify new location:**
+   ```bash
+   bazel info output_base
+   # Should show: /tmp/yourproject-bazel-cache-<uid>/...
+   ```
+
+6. **(Optional) Migrate existing cache to preserve downloads:**
+   ```bash
+   # Only if you want to avoid re-downloading toolchains/dependencies
+   rsync -a ~/.cache/bazel/ /tmp/yourproject-bazel-cache-$(id -u)/
+   sudo chown -R $(id -u):$(id -g) /tmp/yourproject-bazel-cache-$(id -u)
+   ```
+
+7. **Clean up old cache to free space:**
+   ```bash
+   # After verifying new location works
+   rm -rf ~/.cache/bazel
+   ```
+
+**Important notes:**
+- `/tmp` may be ephemeral (cleared on container restart). Caches will be rebuilt on next run if cleared.
+- Use namespaced paths with your UID to avoid conflicts with other users/containers.
+- The `user.bazelrc` file should **not** be committed to version control (add to `.gitignore`) as paths may differ per developer.
+- Alternative large volumes: If `/tmp` is not suitable, check for other mounted volumes with `df -h` and adjust paths accordingly.
+
 ### Memory issues
 
 **Problem:** Build runs out of memory.
