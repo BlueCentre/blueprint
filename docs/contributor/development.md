@@ -207,8 +207,9 @@ bazel test //path/to:test --runs_per_test=10
 # Preview with any Markdown viewer
 
 # Or use a local server
-python -m http.server 8000
-# Visit http://localhost:8000/docs/
+uv pip install grip
+uv run grip
+# Visit http://localhost:6419/docs/
 ```
 
 ## Debugging
@@ -264,7 +265,7 @@ bazel clean --expunge
 **Bazel:**
 ```bash
 # Update .bazelversion
-echo "7.0.0" > .bazelversion
+echo "8.4.1" > .bazelversion
 ```
 
 **Python:**
